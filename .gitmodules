@@ -1,0 +1,6 @@
+[submodule "aho_corasick"]
+	path = aho_corasick
+	url = git@github.com:djmylt/aho_corasick.git
+[submodule "dict_matching"]
+	path = dict_matching
+	url = git@github.com:djmylt/dict_matching.git
