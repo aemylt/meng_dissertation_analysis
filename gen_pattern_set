@@ -10,7 +10,7 @@ with open(sys.argv[3], 'r') as text:
     with open(sys.argv[4], 'w') as patterns:
         patterns.write("%d\n" % num_patterns)
         for i in range(num_patterns):
-            length = random.randint(0, max_length + 1)
-            start = random.randint(0, len(line) - length)
+            length = random.randint(1, max_length + 1)
+            end = random.randint(length, len(line))
             patterns.write("%d\n" % length)
-            patterns.write("%s\n" % line[start:start + length])
+            patterns.write("%s\n" % line[end - length:end])
