@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for i in {0..9}; do
+    ./gen_$1_patterns $2 $3 patterns/$1/$1_$2_$3_$i
+done
