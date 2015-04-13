@@ -1,0 +1,9 @@
+#!/usr/bin/python3.4
+import sys
+from unidecode import unidecode
+
+with open(sys.argv[1], 'r', encoding='ISO-8859-1') as text:
+    line = text.read()
+
+with open(sys.argv[1] + "2", 'w') as text:
+    text.write(unidecode(line))
