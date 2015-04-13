@@ -1,0 +1,19 @@
+#!/usr/bin/python
+import random
+import sys
+
+num_patterns = int(sys.argv[1])
+max_length = int(sys.argv[2])
+
+with open('proteins.50MB', 'r') as text:
+    possible_patterns = []
+    for line in text:
+        if len(line) <= max_length and line not in possible_patterns:
+            possible_patterns.append(line)
+    with open(sys.argv[3], 'w') as patterns:
+        patterns.write("%d\n" % num_patterns)
+        for i in range(num_patterns):
+            pattern = random.choice(possible_patterns)
+            possible_patterns.remove(pattern)
+            patterns.write("%d\n" % len(pattern))
+            patterns.write("%s" % pattern)
