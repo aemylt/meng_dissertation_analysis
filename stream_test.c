@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef AHO_CORASICK_TEST
 #include "aho_corasick/aho_corasick.h"
+#else
+#include "dict_matching/dict_matching.h"
+#endif
 
 int main(int argc, char **argv) {
     FILE *p_file = fopen(argv[1], "r");
@@ -24,7 +28,11 @@ int main(int argc, char **argv) {
     long n = ftell(t_file);
     fseek(t_file, 0, SEEK_SET);
 
+#ifdef AHO_CORASICK_TEST
     ac_state state = ac_build(patterns, m, num_patterns);
+#else
+    dict_matcher state = dict_matching_build(patterns, m, num_patterns, n, 0);
+#endif
 
     for (i = 0; i < num_patterns; i++) {
         free(patterns[i]);
@@ -38,9 +46,12 @@ int main(int argc, char **argv) {
     int count = 0;
     T_i = fgetc(t_file);
     while (T_i != EOF) {
+#ifdef AHO_CORASICK_TEST
         result = ac_stream(state, T_i, i);
+#else
+        result = dict_matching_stream(state, T_i, i);
+#endif
         if (result != -1) {
-            printf("%d %d %d\n", result, state->state, state->has_match[state->state]);
             count++;
         }
         i++;
@@ -49,7 +60,11 @@ int main(int argc, char **argv) {
 
     fclose(t_file);
 
+#ifdef AHO_CORASICK_TEST
     ac_free(state);
+#else
+    dict_matching_free(state);
+#endif
 
     printf("%d\n", count);
 
