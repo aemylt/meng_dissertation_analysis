@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #ifdef AHO_CORASICK_TEST
 #include "aho_corasick/aho_corasick.h"
@@ -28,11 +29,13 @@ int main(int argc, char **argv) {
     long n = ftell(t_file);
     fseek(t_file, 0, SEEK_SET);
 
+    clock_t start = clock();
 #ifdef AHO_CORASICK_TEST
     ac_state state = ac_build(patterns, m, num_patterns);
 #else
     dict_matcher state = dict_matching_build(patterns, m, num_patterns, n, 0);
 #endif
+    double build_time = (double)(clock() - start) / (CLOCKS_PER_SEC/1000);
 
     for (i = 0; i < num_patterns; i++) {
         free(patterns[i]);
@@ -41,6 +44,7 @@ int main(int argc, char **argv) {
     free(patterns);
 
     i = 0;
+    start = clock();
     char T_i;
     int result;
     int count = 0;
@@ -57,8 +61,19 @@ int main(int argc, char **argv) {
         i++;
         T_i = fgetc(t_file);
     }
+    double time = (double)(clock() - start) / (CLOCKS_PER_SEC/1000000);
 
     fclose(t_file);
+
+    printf("%d\n", count);
+#ifdef AHO_CORASICK_TEST
+    printf("%d\n", ac_size(state));
+#else
+    printf("%d,%d,%d\n", dict_matching_size(state), short_dict_matching_size(state->short_matcher), periodic_dict_matching_size(state->periodic_matcher));
+#endif
+    printf("%f\n", build_time);
+    printf("%f\n", time/i);
+    printf("%f\n", time);
 
 #ifdef AHO_CORASICK_TEST
     ac_free(state);
@@ -66,7 +81,6 @@ int main(int argc, char **argv) {
     dict_matching_free(state);
 #endif
 
-    printf("%d\n", count);
 
     return 0;
 }
