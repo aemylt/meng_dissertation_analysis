@@ -1,13 +1,9 @@
 #!/bin/bash
 
-for k in {1000,2000,3000,4000,5000,6000,7000,8000,9000,10000}; do
-    for j in {1000,2000,3000,4000,5000,6000,7000,8000,9000,10000}; do
-        for i in {0..9}; do
+        for i in {0..4}; do
             file="patterns/$1/$1"
-            file+="_$k"
-            file+="_$j"
+            file+="_$2"
+            file+="_$3"
             file+="_$i"
-            ./gen_pattern_set $k $j $1.50MB $file
+            ./gen_pattern_set $2 $3 $1.50MB $file
         done
-    done
-done

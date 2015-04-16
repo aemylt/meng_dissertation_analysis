@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {0..9}; do
+for i in {0..4}; do
     echo $i
     ./$1_test patterns/$2/$2_$3_$4_$i $2.50MB >> results/$1/$2/$2_$3_$4
 done
