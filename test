@@ -4,3 +4,6 @@ for i in {0..4}; do
     echo $i
     ./$1_test patterns/$2/$2_$3_$4_$i $2.50MB >> results/$1/$2/$2_$3_$4
 done
+
+git add .
+git commit -m "Added test results for $1 on $2, $3 x $4"
