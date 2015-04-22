@@ -1,2 +1,4 @@
 patterns
 *_test
+*_profile
+patterns.txt

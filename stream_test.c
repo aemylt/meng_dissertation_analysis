@@ -9,7 +9,11 @@
 #endif
 
 int main(int argc, char **argv) {
+#ifdef PROFILE
+    FILE *p_file = fopen("patterns.txt", "r");
+#else
     FILE *p_file = fopen(argv[1], "r");
+#endif
     int num_patterns;
     fscanf(p_file, "%d\n", &num_patterns);
     int *m = malloc(sizeof(int) * num_patterns);
@@ -24,7 +28,11 @@ int main(int argc, char **argv) {
     }
     fclose(p_file);
 
+#ifdef PROFILE
+    FILE *t_file = fopen("dna.50MB", "r");
+#else
     FILE *t_file = fopen(argv[2], "r");
+#endif
     fseek(t_file, 0, SEEK_END);
     long n = ftell(t_file);
     fseek(t_file, 0, SEEK_SET);
