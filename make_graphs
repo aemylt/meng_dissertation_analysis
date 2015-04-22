@@ -1,0 +1,115 @@
+#!/usr/bin/python
+
+import sys
+
+import matplotlib.pyplot as plt
+import numpy
+
+min_num = int(sys.argv[1])
+max_num = int(sys.argv[2])
+step_num = int(sys.argv[3])
+min_len = int(sys.argv[4])
+max_len = int(sys.argv[5])
+step_len = int(sys.argv[6])
+
+lengths = []
+ac_build = []
+dm_build = []
+ac_size = []
+dm_size = []
+short_size = []
+periodic_size = []
+ac_stream = []
+dm_stream = []
+for i in range(min_num, max_num + step_num, step_num):
+    lengths.append([])
+    ac_build.append([])
+    dm_build.append([])
+    ac_size.append([])
+    dm_size.append([])
+    short_size.append([])
+    periodic_size.append([])
+    ac_stream.append([])
+    dm_stream.append([])
+    for j in range(min_len, max_len + step_len, step_len):
+        lengths[-1].append([])
+        ac_build[-1].append([])
+        dm_build[-1].append([])
+        ac_size[-1].append([])
+        dm_size[-1].append([])
+        short_size[-1].append([])
+        periodic_size[-1].append([])
+        ac_stream[-1].append([])
+        dm_stream[-1].append([])
+        with open('results/aho_corasick/dna/dna_%d_%d' % (i, j)) as ac_results:
+            with open('results/dict_matching/dna/dna_%d_%d' % (i, j)) as dm_results:
+                for k in range(5):
+                    lengths[-1][-1].append([])
+                    ac_results.readline()
+                    ac_size[-1][-1].append(int(ac_results.readline()))
+                    ac_build[-1][-1].append(float(ac_results.readline()))
+                    ac_stream[-1][-1].append(float(ac_results.readline()))
+                    ac_results.readline()
+                    dm_results.readline()
+                    sizes = dm_results.readline().split(',')
+                    dm_size[-1][-1].append(int(sizes[0]))
+                    short_size[-1][-1].append(int(sizes[1]))
+                    periodic_size[-1][-1].append(int(sizes[2]))
+                    dm_build[-1][-1].append(float(dm_results.readline()))
+                    dm_stream[-1][-1].append(float(dm_results.readline()))
+                    dm_results.readline()
+                    with open('patterns/dna/dna_%d_%d_%d' % (i, j, k)) as patterns:
+                        patterns.readline()
+                        while True:
+                            length = patterns.readline()
+                            if not length:
+                                break
+                            lengths[-1][-1][-1].append(int(length))
+                            patterns.read(lengths[-1][-1][-1][-1] + 1)
+                    lengths[-1][-1][-1] = numpy.mean(lengths[-1][-1][-1])
+
+def flatten(items):
+    flattened = []
+    try:
+        for item in items:
+            flattened += flatten(item)
+        return flattened
+    except:
+        return [items]
+
+lengths = flatten(lengths)
+ac_build = flatten(ac_build)
+dm_build = flatten(dm_build)
+ac_size = flatten(ac_size)
+dm_size = flatten(dm_size)
+short_size = flatten(short_size)
+periodic_size = flatten(periodic_size)
+ac_stream = flatten(ac_stream)
+dm_stream = flatten(dm_stream)
+
+zipped = zip(lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream)
+zipped.sort()
+lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream = zip(*zipped)
+
+plt.figure()
+plt.plot(lengths, ac_build, label='Aho-Corasick')
+plt.plot(lengths, dm_build, label='Clifford et al.')
+plt.legend()
+plt.title('Build time for dictionary matching')
+plt.xlabel('Average length of patterns')
+plt.ylabel('Build time ($\mu$ s)')
+plt.figure()
+plt.plot(lengths, ac_size, label='Aho-Corasick')
+plt.plot(lengths, dm_size, label='Clifford et al.')
+plt.legend()
+plt.title('Space usage for dictionary matching')
+plt.xlabel('Average length of patterns')
+plt.ylabel('Space consumption (B)')
+plt.figure()
+plt.plot(lengths, ac_stream, label='Aho-Corasick')
+plt.plot(lengths, dm_stream, label='Clifford et al.')
+plt.legend()
+plt.title('Average time per character for dictionary matching')
+plt.xlabel('Average length of patterns')
+plt.ylabel('Average time per character ($\mu$ s)')
+plt.show()
