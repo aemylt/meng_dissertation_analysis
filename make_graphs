@@ -2,6 +2,7 @@
 
 import sys
 
+from itertools import izip_longest
 import matplotlib.pyplot as plt
 import numpy
 
@@ -21,7 +22,9 @@ short_size = []
 periodic_size = []
 ac_stream = []
 dm_stream = []
+num = []
 for i in range(min_num, max_num + step_num, step_num):
+    num += [i] * ((max_len - min_len)/step_len + 1)
     lengths.append([])
     ac_build.append([])
     dm_build.append([])
@@ -87,29 +90,68 @@ periodic_size = flatten(periodic_size)
 ac_stream = flatten(ac_stream)
 dm_stream = flatten(dm_stream)
 
-zipped = zip(lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream)
-zipped.sort()
-lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream = zip(*zipped)
+def grouper(n, iterable, fillvalue=None):
+    "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
 
-plt.figure()
-plt.plot(lengths, ac_build, label='Aho-Corasick')
-plt.plot(lengths, dm_build, label='Clifford et al.')
-plt.legend()
-plt.title('Build time for dictionary matching')
-plt.xlabel('Average length of patterns')
-plt.ylabel('Build time ($\mu$ s)')
-plt.figure()
-plt.plot(lengths, ac_size, label='Aho-Corasick')
-plt.plot(lengths, dm_size, label='Clifford et al.')
-plt.legend()
-plt.title('Space usage for dictionary matching')
-plt.xlabel('Average length of patterns')
-plt.ylabel('Space consumption (B)')
-plt.figure()
-plt.plot(lengths, ac_stream, label='Aho-Corasick')
-plt.plot(lengths, dm_stream, label='Clifford et al.')
-plt.legend()
-plt.title('Average time per character for dictionary matching')
-plt.xlabel('Average length of patterns')
-plt.ylabel('Average time per character ($\mu$ s)')
-plt.show()
+def get_means(items):
+    return [numpy.mean(item) for item in grouper(5, items)]
+
+if max_num == min_num:
+    zipped = zip(lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream)
+    zipped.sort()
+    lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream = zip(*zipped)
+    plt.figure()
+    plt.plot(lengths, ac_build, label='Aho-Corasick')
+    plt.plot(lengths, dm_build, label='Clifford et al.')
+    plt.legend()
+    plt.title('Build time for dictionary matching')
+    plt.xlabel('Average length of patterns (B)')
+    plt.ylabel('Build time ($\mu$ s)')
+    plt.figure()
+    plt.plot(lengths, ac_size, label='Aho-Corasick')
+    plt.plot(lengths, dm_size, label='Clifford et al.')
+    plt.legend()
+    plt.title('Space usage for dictionary matching')
+    plt.xlabel('Average length of patterns (B)')
+    plt.ylabel('Space consumption (B)')
+    plt.figure()
+    plt.plot(lengths, ac_stream, label='Aho-Corasick')
+    plt.plot(lengths, dm_stream, label='Clifford et al.')
+    plt.legend()
+    plt.title('Average time per character for dictionary matching')
+    plt.xlabel('Average length of patterns (B)')
+    plt.ylabel('Average time per character ($\mu$ s)')
+    plt.show()
+else:
+    ac_build = get_means(ac_build)
+    dm_build = get_means(dm_build)
+    ac_size = get_means(ac_size)
+    dm_size = get_means(dm_size)
+    short_size = get_means(short_size)
+    periodic_size = get_means(periodic_size)
+    ac_stream = get_means(ac_stream)
+    dm_stream = get_means(dm_stream)
+    plt.figure()
+    plt.plot(num, ac_build, label='Aho-Corasick')
+    plt.plot(num, dm_build, label='Clifford et al.')
+    plt.legend()
+    plt.title('Build time for dictionary matching')
+    plt.xlabel('Number of patterns')
+    plt.ylabel('Build time ($\mu$ s)')
+    plt.figure()
+    plt.plot(num, ac_size, label='Aho-Corasick')
+    plt.plot(num, dm_size, label='Clifford et al.')
+    plt.legend()
+    plt.title('Space usage for dictionary matching')
+    plt.xlabel('Number of patterns')
+    plt.ylabel('Space consumption (B)')
+    plt.figure()
+    plt.plot(num, ac_stream, label='Aho-Corasick')
+    plt.plot(num, dm_stream, label='Clifford et al.')
+    plt.legend()
+    plt.title('Average time per character for dictionary matching')
+    plt.xlabel('Number of patterns')
+    plt.ylabel('Average time per character ($\mu$ s)')
+    plt.show()
