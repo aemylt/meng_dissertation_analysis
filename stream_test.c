@@ -10,7 +10,10 @@
 
 int main(int argc, char **argv) {
     int alpha;
-    if (argc == 4) sscanf(argv[3], "%d", &alpha);
+    if (argc == 4) {
+        printf("%s\n", argv[3]);
+        sscanf(argv[3], "%d", &alpha);
+    }
     else alpha = 0;
 #ifdef PROFILE
     FILE *p_file = fopen("patterns.txt", "r");
