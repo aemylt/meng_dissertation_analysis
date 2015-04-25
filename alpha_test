@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in {0..4}; do
+    echo $i
+    ./$dict_matching_test patterns/dna/dna_400_100_$i $dna.50MB $1 >> results/dict_matching/dna/dna_alpha_$1
+done
+
+git add .
+git commit -m "Added test results for alpha value $1"

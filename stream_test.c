@@ -9,6 +9,9 @@
 #endif
 
 int main(int argc, char **argv) {
+    int alpha;
+    if (argc == 4) sscanf(argv[3], "%d", &alpha);
+    else alpha = 0;
 #ifdef PROFILE
     FILE *p_file = fopen("patterns.txt", "r");
 #else
@@ -41,7 +44,7 @@ int main(int argc, char **argv) {
 #ifdef AHO_CORASICK_TEST
     ac_state state = ac_build(patterns, m, num_patterns);
 #else
-    dict_matcher state = dict_matching_build(patterns, m, num_patterns, n, 0);
+    dict_matcher state = dict_matching_build(patterns, m, num_patterns, n, alpha);
 #endif
     double build_time = (double)(clock() - start) / (CLOCKS_PER_SEC/1000);
 
