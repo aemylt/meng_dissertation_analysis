@@ -10,9 +10,7 @@
 
 int main(int argc, char **argv) {
     int alpha;
-    printf("%d\n", argc);
     if (argc == 4) {
-        printf("%s\n", argv[3]);
         sscanf(argv[3], "%d", &alpha);
     }
     else alpha = 0;
