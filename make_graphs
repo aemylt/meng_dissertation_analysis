@@ -128,6 +128,9 @@ if max_num == min_num:
     plt.ylabel('Average time per character ($\mu$ s)')
     plt.figure()
     plt.plot(lengths, diff)
+    plt.title('Difference in number of matches')
+    plt.xlabel('Average length of patterns (B)')
+    plt.ylabel('Average difference in number of matches')
     plt.show()
 else:
     ac_build = get_means(ac_build)
@@ -162,4 +165,7 @@ else:
     plt.ylabel('Average time per character ($\mu$ s)')
     plt.figure()
     plt.plot(num, diff)
+    plt.title('Average difference in number of matches')
+    plt.xlabel('Number of patterns')
+    plt.ylabel('Average difference in number of matches')
     plt.show()
