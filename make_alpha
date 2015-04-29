@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+import matplotlib.pyplot as plt
+import numpy
+
+build = []
+size = []
+short_size = []
+periodic_size = []
+stream = []
+alpha = []
+
+for i in range(6):
+    alpha += [i]
+    with open('results/dict_matching/dna/dna_alpha_%d' % i) as results:
+        build.append([])
+        size.append([])
+        short_size.append([])
+        periodic_size.append([])
+        stream.append([])
+        for j in range(5):
+            results.readline()
+            sizes = results.readline().split(',')
+            size[-1].append(int(sizes[0]))
+            short_size[-1].append(int(sizes[1]))
+            periodic_size[-1].append(int(sizes[2]))
+            build[-1].append(float(results.readline()))
+            stream[-1].append(float(results.readline()))
+            results.readline()
+        size[-1] = numpy.mean(size[-1]);
+        short_size[-1] = numpy.mean(short_size[-1]);
+        periodic_size[-1] = numpy.mean(periodic_size[-1]);
+        build[-1] = numpy.mean(build[-1]);
+        stream[-1] = numpy.mean(stream[-1]);
+
+plt.figure()
+plt.plot(alpha, size)
+plt.figure()
+plt.plot(alpha, build)
+plt.figure()
+plt.plot(alpha, stream)
+plt.show()
