@@ -51,7 +51,8 @@ for i in range(min_num, max_num + step_num, step_num):
             with open('results/dict_matching/dna/dna_%d_%d' % (i, j)) as dm_results:
                 for k in range(5):
                     lengths[-1][-1].append([])
-                    diff[-1][-1].append(int(ac_results.readline()) - int(dm_results.readline()))
+                    num_ac = int(ac_results.readline())
+                    diff[-1][-1].append((num_ac - int(dm_results.readline())) * 100.0 / num_ac)
                     ac_size[-1][-1].append(int(ac_results.readline()))
                     ac_build[-1][-1].append(float(ac_results.readline()))
                     ac_stream[-1][-1].append(float(ac_results.readline()))
@@ -133,7 +134,7 @@ if max_num == min_num:
     plt.plot(lengths, diff)
     plt.title('Difference in number of matches')
     plt.xlabel('Average length of patterns (B)')
-    plt.ylabel('Average difference in number of matches')
+    plt.ylabel('Difference in number of matches (% of total matches)')
     plt.savefig('diff_length_%d_%d.pdf' % (min_len, max_len), bbox_inches='tight')
 else:
     ac_build = get_means(ac_build)
@@ -173,5 +174,5 @@ else:
     plt.plot(num, diff)
     plt.title('Average difference in number of matches')
     plt.xlabel('Number of patterns')
-    plt.ylabel('Average difference in number of matches')
+    plt.ylabel('Average difference in number of matches (% of total matches)')
     plt.savefig('diff_num_%d_%d.pdf' % (min_num, max_num), bbox_inches='tight')
