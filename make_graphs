@@ -22,6 +22,7 @@ short_size = []
 periodic_size = []
 ac_stream = []
 dm_stream = []
+diff = []
 num = []
 for i in range(min_num, max_num + step_num, step_num):
     num += [i] * ((max_len - min_len)/step_len + 1)
@@ -34,6 +35,7 @@ for i in range(min_num, max_num + step_num, step_num):
     periodic_size.append([])
     ac_stream.append([])
     dm_stream.append([])
+    diff.append([])
     for j in range(min_len, max_len + step_len, step_len):
         lengths[-1].append([])
         ac_build[-1].append([])
@@ -44,16 +46,16 @@ for i in range(min_num, max_num + step_num, step_num):
         periodic_size[-1].append([])
         ac_stream[-1].append([])
         dm_stream[-1].append([])
+        diff[-1].append([])
         with open('results/aho_corasick/dna/dna_%d_%d' % (i, j)) as ac_results:
             with open('results/dict_matching/dna/dna_%d_%d' % (i, j)) as dm_results:
                 for k in range(5):
                     lengths[-1][-1].append([])
-                    ac_results.readline()
+                    diff[-1][-1].append(int(ac_results.readline()) - int(dm_results.readline()))
                     ac_size[-1][-1].append(int(ac_results.readline()))
                     ac_build[-1][-1].append(float(ac_results.readline()))
                     ac_stream[-1][-1].append(float(ac_results.readline()))
                     ac_results.readline()
-                    dm_results.readline()
                     sizes = dm_results.readline().split(',')
                     dm_size[-1][-1].append(int(sizes[0]))
                     short_size[-1][-1].append(int(sizes[1]))
@@ -89,6 +91,7 @@ short_size = flatten(short_size)
 periodic_size = flatten(periodic_size)
 ac_stream = flatten(ac_stream)
 dm_stream = flatten(dm_stream)
+diff = flatten(diff)
 
 def grouper(n, iterable, fillvalue=None):
     "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
@@ -99,9 +102,9 @@ def get_means(items):
     return [numpy.mean(item) for item in grouper(5, items)]
 
 if max_num == min_num:
-    zipped = zip(lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream)
+    zipped = zip(lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream, diff)
     zipped.sort()
-    lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream = zip(*zipped)
+    lengths, ac_build, dm_build, ac_size, dm_size, short_size, periodic_size, ac_stream, dm_stream, diff = zip(*zipped)
     plt.figure()
     plt.plot(lengths, ac_build, label='Aho-Corasick')
     plt.plot(lengths, dm_build, label='Clifford et al.')
@@ -123,6 +126,8 @@ if max_num == min_num:
     plt.title('Average time per character for dictionary matching')
     plt.xlabel('Average length of patterns (B)')
     plt.ylabel('Average time per character ($\mu$ s)')
+    plt.figure()
+    plt.plot(lengths, diff)
     plt.show()
 else:
     ac_build = get_means(ac_build)
@@ -133,6 +138,7 @@ else:
     periodic_size = get_means(periodic_size)
     ac_stream = get_means(ac_stream)
     dm_stream = get_means(dm_stream)
+    diff = get_means(diff)
     plt.figure()
     plt.plot(num, ac_build, label='Aho-Corasick')
     plt.plot(num, dm_build, label='Clifford et al.')
@@ -154,4 +160,6 @@ else:
     plt.title('Average time per character for dictionary matching')
     plt.xlabel('Number of patterns')
     plt.ylabel('Average time per character ($\mu$ s)')
+    plt.figure()
+    plt.plot(num, diff)
     plt.show()
