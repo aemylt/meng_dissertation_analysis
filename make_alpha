@@ -7,6 +7,7 @@ build = []
 size = []
 short_size = []
 periodic_size = []
+long_size = []
 stream = []
 alpha = []
 
@@ -17,6 +18,7 @@ for i in range(6):
         size.append([])
         short_size.append([])
         periodic_size.append([])
+        long_size.append([])
         stream.append([])
         for j in range(5):
             results.readline()
@@ -24,30 +26,42 @@ for i in range(6):
             size[-1].append(int(sizes[0]))
             short_size[-1].append(int(sizes[1]))
             periodic_size[-1].append(int(sizes[2]))
+            long_size[-1].append(size[-1][-1] - short_size[-1][-1] - periodic_size[-1][-1])
             build[-1].append(float(results.readline()))
             stream[-1].append(float(results.readline()))
             results.readline()
         size[-1] = numpy.mean(size[-1]);
         short_size[-1] = numpy.mean(short_size[-1]);
         periodic_size[-1] = numpy.mean(periodic_size[-1]);
+        long_size[-1] = numpy.mean(long_size[-1]);
         build[-1] = numpy.mean(build[-1]);
         stream[-1] = numpy.mean(stream[-1]);
 
 plt.figure()
 plt.plot(alpha, size)
-plt.title('Space usage for dictionary matching')
+plt.title(r'Space consumption for dictionary matching over $\alpha$ value')
 plt.xlabel(r'Value of $\alpha$')
 plt.ylabel('Space consumption (B)')
 plt.savefig('size_alpha.pdf', bbox_inches='tight')
 plt.figure()
 plt.plot(alpha, build)
-plt.title('Build time for dictionary matching')
+plt.title(r'Build time for dictionary matching over $\alpha$ value')
 plt.xlabel(r'Value of $\alpha$')
 plt.ylabel('Build time ($\mu$ s)')
 plt.savefig('build_alpha.pdf', bbox_inches='tight')
 plt.figure()
 plt.plot(alpha, stream)
-plt.title('Average time per character for dictionary matching')
+plt.title('Average time per character for\ndictionary' + r' matching over $\alpha$ value')
 plt.xlabel(r'Value of $\alpha$')
 plt.ylabel('Average time per character ($\mu$ s)')
 plt.savefig('time_alpha.pdf', bbox_inches='tight')
+plt.figure()
+plt.plot(alpha, size, label='Total size')
+plt.plot(alpha, short_size, label='Short patterns')
+plt.plot(alpha, periodic_size, label='Periodic patterns')
+plt.plot(alpha, long_size, label='Long patterns')
+plt.legend()
+plt.title('Space consumption for short, periodic\nand ' + r'long patterns over $\alpha$ value')
+plt.xlabel(r'Value of $\alpha$')
+plt.ylabel('Space consumption (B)')
+plt.savefig('part_size_alpha.pdf', bbox_inches='tight')
