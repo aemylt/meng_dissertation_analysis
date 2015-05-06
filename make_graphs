@@ -122,8 +122,9 @@ if max_num == min_num:
     plt.title('Space consumption for dictionary matching over length')
     plt.xlabel('Average length of patterns (B)')
     plt.ylabel('Space consumption (B)')
-    plt.ylim([0, 900000000])
-    plt.yticks(range(0, 1000000000, 100000000), [str(x) + "e8" for x in range(0, 10)])
+    if len(sys.argv) == 8:
+        plt.ylim([0, 900000000])
+        plt.yticks(range(0, 1000000000, 100000000), [str(x) + "e8" for x in range(0, 10)])
     plt.plot(lengths, ac_size, label='Aho-Corasick')
     plt.plot(lengths, dm_size, label='Clifford et al.')
     plt.savefig('size_length_%d_%d.pdf' % (min_len, max_len), bbox_inches='tight')
